@@ -1,49 +1,9 @@
 import { Button } from "@/components/ui/button";
 import Cell from "@/components/cell";
 import { useCallback, useEffect, useState } from "react";
-import { CellType } from "./types";
 import { Bomb } from "lucide-react";
-
-const COLUMNS = 10;
-const ROWS = 10;
-
-type CoordinateType = {
-  y: number;
-  x: number;
-};
-
-function initializeGame() {
-  const board = Array(ROWS)
-    .fill(null)
-    .map(() =>
-      Array(COLUMNS)
-        .fill(null)
-        .map(
-          () =>
-            ({
-              type: "cell",
-              releaved: false,
-            }) as CellType,
-        ),
-    );
-
-  board[0][0].type = "car";
-  board[0][0].releaved = true;
-
-  board[ROWS - 1][COLUMNS - 1].type = "prize";
-  board[ROWS - 1][COLUMNS - 1].releaved = true;
-
-  return board;
-}
-
-function isInsideBoard(position: CoordinateType) {
-  return (
-    position.y >= 0 &&
-    position.y < ROWS &&
-    position.x >= 0 &&
-    position.x < COLUMNS
-  );
-}
+import { CellType, CoordinateType } from "./types";
+import { isInsideBoard } from "./utils";
 
 function App() {
   const [board, setBoard] = useState(initializeGame());
@@ -112,10 +72,10 @@ function App() {
             <div className="text-secondary pb-2 font-semibold">Near 0 mine</div>
             <div className="text-secondary pb-2 font-semibold">Score: 0</div>
           </div>
-          {board.map((row, rowIndex) => {
+          {board.map((row: Array<CellType>, rowIndex: number) => {
             return (
               <div className="flex gap-1" key={`row-${rowIndex}`}>
-                {row.map((cell, columnIndex) => (
+                {row.map((cell: CellType, columnIndex: number) => (
                   <Cell key={`cell-${rowIndex}-${columnIndex}`} item={cell} />
                 ))}
               </div>

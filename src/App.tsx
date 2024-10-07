@@ -1,14 +1,38 @@
 import { Button } from "@/components/ui/button";
 import Cell from "@/components/cell";
+import { useState } from "react";
+import { CellType } from "./types";
 
 const COLUMNS = 10;
 const ROWS = 10;
 
-const board = Array(ROWS)
-  .fill(null)
-  .map(() => Array(COLUMNS).fill(null));
+function initializeGame() {
+  const board = Array(ROWS)
+    .fill(null)
+    .map(() =>
+      Array(COLUMNS)
+        .fill(null)
+        .map(
+          () =>
+            ({
+              type: "cell",
+              releaved: false,
+            }) as CellType,
+        ),
+    );
+
+  board[0][0].type = "car";
+  board[0][0].releaved = true;
+
+  board[ROWS - 1][COLUMNS - 1].type = "prize";
+  board[ROWS - 1][COLUMNS - 1].releaved = true;
+
+  return board;
+}
 
 function App() {
+  const [board, setBoard] = useState(initializeGame());
+
   return (
     <main className="flex justify-center items-center min-h-screen bg-gradient-to-b from-purple-900 to-purple-200 p-2">
       <div className="bg-gray-800 p-4 rounded-lg flex flex-col gap-4">
@@ -24,7 +48,7 @@ function App() {
             return (
               <div className="flex gap-1" key={`row-${rowIndex}`}>
                 {row.map((cell, columnIndex) => (
-                  <Cell key={`cell-${rowIndex}-${columnIndex}`}>{cell}</Cell>
+                  <Cell key={`cell-${rowIndex}-${columnIndex}`} item={cell} />
                 ))}
               </div>
             );

@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import Cell from "@/components/cell";
 
 const COLUMNS = 10;
 const ROWS = 10;
@@ -23,10 +24,7 @@ function App() {
             return (
               <div className="flex gap-1" key={`row-${rowIndex}`}>
                 {row.map((cell, columnIndex) => (
-                  <div
-                    key={`cell-${rowIndex}-${columnIndex}`}
-                    className="rounded-lg bg-slate-400 w-8 h-8 items-center justify-center flex"
-                  ></div>
+                  <Cell key={`cell-${rowIndex}-${columnIndex}`}>{cell}</Cell>
                 ))}
               </div>
             );

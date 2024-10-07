@@ -3,7 +3,7 @@ import Cell from "@/components/cell";
 import { useCallback, useEffect, useState } from "react";
 import { Bomb } from "lucide-react";
 import { CellType, CoordinateType } from "./types";
-import { isInsideBoard } from "./utils";
+import { initializeGame, isInsideBoard } from "./utils";
 
 function App() {
   const [board, setBoard] = useState(initializeGame());

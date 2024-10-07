@@ -3,18 +3,31 @@ import Cell from "@/components/cell";
 import { useCallback, useEffect, useState } from "react";
 import { Bomb } from "lucide-react";
 import { CellType, CoordinateType } from "./types";
-import { initializeGame, isInsideBoard } from "./utils";
+import { checkNearMines, initializeGame, isInsideBoard } from "./utils";
 
 function App() {
   const [board, setBoard] = useState(initializeGame());
   const [car, setCar] = useState<CoordinateType>({ y: 0, x: 0 });
   const [score, setScore] = useState(0);
-  const [nearBombs, setNearBombs] = useState(0);
+  const [nearMines, setNearMines] = useState(checkNearMines(board, car));
   const [win, setWin] = useState(false);
   const [gameOver, setGameOver] = useState(false);
 
+  const handleNewGame = () => {
+    setBoard(initializeGame());
+    setCar({ y: 0, x: 0 });
+    setScore(0);
+    setNearMines(0);
+    setWin(false);
+    setGameOver(false);
+  };
+
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
+      if (win || gameOver) {
+        return;
+      }
+
       const key = e.key.toLowerCase();
 
       const newCarPosition = { ...car };
@@ -40,20 +53,37 @@ function App() {
 
       if (isInsideBoard(newCarPosition)) {
         setCar(newCarPosition);
+        const { y: newRow, x: newColumn } = newCarPosition;
+
+        const newCellPosition = board[newRow][newColumn];
+
+        if (newCellPosition.type === "bomb") {
+          setGameOver(true);
+          return;
+        }
+
+        if (newCellPosition.type == "prize") {
+          setWin(true);
+        }
 
         const newBoard = [...board];
-        const { y: newRow, x: newColumn } = newCarPosition;
         const { y: oldRow, x: oldColumn } = car;
 
+        newCellPosition.type = "car";
         newBoard[oldRow][oldColumn].type = "cell";
 
-        newBoard[newRow][newColumn].type = "car";
-        newBoard[newRow][newColumn].releaved = true;
+        const nearMines = checkNearMines(board, newCarPosition);
 
-        setBoard(newBoard);
+        if (!newCellPosition.releaved) {
+          setScore((score) => score + 1);
+        }
+
+        newCellPosition.releaved = true;
+
+        setNearMines(nearMines);
       }
     },
-    [car, board],
+    [car, board, gameOver, win],
   );
 
   useEffect(() => {
@@ -69,15 +99,13 @@ function App() {
         <h1 className="text-secondary text-5xl text-center font-bold">
           Mine Hunter
         </h1>
-        <div className="flex flex-col gap-1 bg-gray-700 p-4 rounded-lg">
-          <div className="flex justify-between px-2">
-            <div className="text-secondary pb-2 font-semibold">
-              Near {nearBombs} mine
-            </div>
-            <div className="text-secondary pb-2 font-semibold">
-              Score: {score}
-            </div>
+        <div className="flex justify-between pt-2 px-2">
+          <div className="text-secondary font-semibold">
+            Near {nearMines} mines
           </div>
+          <div className="text-secondary  font-semibold">Score: {score}</div>
+        </div>
+        <div className="flex flex-col gap-1 bg-gray-700 p-4 rounded-lg justify-center items-center">
           {board.map((row: Array<CellType>, rowIndex: number) => {
             return (
               <div className="flex gap-1" key={`row-${rowIndex}`}>
@@ -95,7 +123,9 @@ function App() {
           {gameOver && (
             <div className="text-red-500 font-bold text-xl">Game Over 💥</div>
           )}
-          <Button className="w-28 h-10 rounded-lg">New Game</Button>
+          <Button className="w-28 h-10 rounded-lg" onClick={handleNewGame}>
+            New Game
+          </Button>
           <span className="text-base font-bold flex justify-center items-center">
             Help the car navigate thourgh the minified to reach the prize!
           </span>

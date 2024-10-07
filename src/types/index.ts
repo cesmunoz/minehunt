@@ -1,5 +1,5 @@
 export type CellType = {
-  type: "cell" | "car" | "prize";
+  type: "cell" | "car" | "prize" | "bomb";
   releaved: boolean;
 };
 

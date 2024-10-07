@@ -1,11 +1,16 @@
 import { Button } from "@/components/ui/button";
 import Cell from "@/components/cell";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { CellType } from "./types";
 import { Bomb } from "lucide-react";
 
 const COLUMNS = 10;
 const ROWS = 10;
+
+type CoordinateType = {
+  y: number;
+  x: number;
+};
 
 function initializeGame() {
   const board = Array(ROWS)
@@ -31,10 +36,70 @@ function initializeGame() {
   return board;
 }
 
+function isInsideBoard(position: CoordinateType) {
+  return (
+    position.y >= 0 &&
+    position.y < ROWS &&
+    position.x >= 0 &&
+    position.x < COLUMNS
+  );
+}
+
 function App() {
   const [board, setBoard] = useState(initializeGame());
+  const [car, setCar] = useState<CoordinateType>({ y: 0, x: 0 });
   const [win, setWin] = useState(false);
   const [gameOver, setGameOver] = useState(false);
+
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      const key = e.key.toLowerCase();
+
+      const newCarPosition = { ...car };
+
+      switch (key) {
+        case "arrowup":
+        case "w":
+          newCarPosition.y--;
+          break;
+        case "arrowdown":
+        case "s":
+          newCarPosition.y++;
+          break;
+        case "arrowleft":
+        case "l":
+          newCarPosition.x--;
+          break;
+        case "arrowright":
+        case "r":
+          newCarPosition.x++;
+          break;
+      }
+
+      if (isInsideBoard(newCarPosition)) {
+        setCar(newCarPosition);
+
+        const newBoard = [...board];
+        const { y: newRow, x: newColumn } = newCarPosition;
+        const { y: oldRow, x: oldColumn } = car;
+
+        newBoard[oldRow][oldColumn].type = "cell";
+
+        newBoard[newRow][newColumn].type = "car";
+        newBoard[newRow][newColumn].releaved = true;
+
+        setBoard(newBoard);
+      }
+    },
+    [car, board],
+  );
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleKeyDown]);
 
   return (
     <main className="flex justify-center items-center min-h-screen bg-gradient-to-b from-purple-900 to-purple-200 p-2">

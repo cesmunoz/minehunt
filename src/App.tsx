@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import Cell from "@/components/cell";
 import { useState } from "react";
 import { CellType } from "./types";
+import { Bomb } from "lucide-react";
 
 const COLUMNS = 10;
 const ROWS = 10;
@@ -32,6 +33,8 @@ function initializeGame() {
 
 function App() {
   const [board, setBoard] = useState(initializeGame());
+  const [win, setWin] = useState(false);
+  const [gameOver, setGameOver] = useState(false);
 
   return (
     <main className="flex justify-center items-center min-h-screen bg-gradient-to-b from-purple-900 to-purple-200 p-2">
@@ -55,13 +58,22 @@ function App() {
           })}
         </div>
         <section className="text-secondary flex flex-col items-center text-center gap-4">
+          {win && (
+            <div className="text-green-400 font-bold text-xl">You won! 🏆</div>
+          )}
+          {gameOver && (
+            <div className="text-red-500 font-bold text-xl">Game Over 💥</div>
+          )}
           <Button className="w-28 h-10 rounded-lg">New Game</Button>
           <span className="text-base font-bold flex justify-center items-center">
             Help the car navigate thourgh the minified to reach the prize!
           </span>
           <div className="text-sm font-medium flex flex-col">
             <span>Use the arrow keys or W A S D keys to move the car</span>
-            <span>Avoid the mines</span>
+            <span className="flex items-center justify-center gap-2">
+              Avoid the mines
+              <Bomb className="w-4 h-4" />
+            </span>
           </div>
         </section>
       </div>

@@ -18,11 +18,12 @@ export default function Cell({ item, gameOver, win }: CellProps) {
         },
       )}
     >
-      {item.type === "car" && !gameOver && <Car />}
-      {item.type === "car" && gameOver && <span>💥</span>}
-      {item.type === "prize" && (
-        <Trophy className={cn({ "text-green-700": win })} />
+      {item.type === "car" && !gameOver && (
+        <Car className={cn({ "text-yellow-300": win })} />
       )}
+
+      {item.type === "prize" && <Trophy />}
+
       {(gameOver || win) && item.type === "bomb" && (
         <Bomb className="text-red-700" />
       )}

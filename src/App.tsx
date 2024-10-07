@@ -110,7 +110,12 @@ function App() {
             return (
               <div className="flex gap-1" key={`row-${rowIndex}`}>
                 {row.map((cell: CellType, columnIndex: number) => (
-                  <Cell key={`cell-${rowIndex}-${columnIndex}`} item={cell} />
+                  <Cell
+                    key={`cell-${rowIndex}-${columnIndex}`}
+                    item={cell}
+                    gameOver={gameOver}
+                    win={win}
+                  />
                 ))}
               </div>
             );

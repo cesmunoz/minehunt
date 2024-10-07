@@ -8,6 +8,8 @@ import { initializeGame, isInsideBoard } from "./utils";
 function App() {
   const [board, setBoard] = useState(initializeGame());
   const [car, setCar] = useState<CoordinateType>({ y: 0, x: 0 });
+  const [score, setScore] = useState(0);
+  const [nearBombs, setNearBombs] = useState(0);
   const [win, setWin] = useState(false);
   const [gameOver, setGameOver] = useState(false);
 
@@ -69,8 +71,12 @@ function App() {
         </h1>
         <div className="flex flex-col gap-1 bg-gray-700 p-4 rounded-lg">
           <div className="flex justify-between px-2">
-            <div className="text-secondary pb-2 font-semibold">Near 0 mine</div>
-            <div className="text-secondary pb-2 font-semibold">Score: 0</div>
+            <div className="text-secondary pb-2 font-semibold">
+              Near {nearBombs} mine
+            </div>
+            <div className="text-secondary pb-2 font-semibold">
+              Score: {score}
+            </div>
           </div>
           {board.map((row: Array<CellType>, rowIndex: number) => {
             return (
